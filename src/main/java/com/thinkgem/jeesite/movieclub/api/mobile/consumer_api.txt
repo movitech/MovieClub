@@ -1,0 +1,48 @@
+#-- 20151015
+#忘记密码
+POST: api/m/consumer/forgetPassword
+{
+    "email":"jason.xu@movit-tech.com"
+}
+#发送账号激活邮件
+POST: api/m/consumer/sendActiveEmail
+{
+    "email":"jason.xu@movit-tech.com"
+}
+
+#------------------------------------------------
+#注册
+POST: /api/m/consumer/register
+{
+    "email":"jason.xu@movit-tech.com",
+    "firstName":"jason",
+    "lastName":"xu",
+    "gender":"male",
+    "birthday":"2015-01-01",
+    "password":"Movit_15030123."
+}
+
+#更新账号
+POST: /api/m/consumer/update
+{
+    "email":"jason.xu@movit-tech.com",
+    "firstName":"jason",
+    "lastName":"xu",
+    "gender":"male",
+    "birthday":"2015-01-01"
+}
+
+#登录
+POST:/api/m/consumer/login
+{
+    "email":"jason.xu@movit-tech.com",
+    "password":"Movit_15030123."
+}
+
+#更新密码
+POST: /api/m/consumer/changePassword
+{
+    "email":"jason.xu@movit-tech.com",
+    "password":"Movit_15030123.",
+    "newPassword":"Movit_123."
+}

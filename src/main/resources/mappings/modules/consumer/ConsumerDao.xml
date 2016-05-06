@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.movieclub.consumer.dao.ConsumerDao">
+
+    <sql id="consumerColumns">
+		c.id AS "id",
+		c.email AS "email",
+		c.first_name AS "firstName",
+		c.last_name AS "lastName",
+		c.nick_name AS "nickName",
+		c.gender AS "gender",
+		c.birthday AS "birthday",
+		c.password AS "password",
+		m.id AS "userRoleId",
+        m.role_name AS "roleName",
+		c.access_token_web AS "webAccessToken",
+		c.token_expire_date_web AS "webTokenExpireDate",
+		c.access_token_mobile AS "mobileAccessToken",
+		c.token_expire_date_mobile AS "mobileTokenExpireDate",
+		c.reset_password_token AS "resetPasswordToken",
+		c.reset_password_token_expire_date AS "resetPasswordTokenExpireDate",
+		c.access_token_third AS "thirdAccessToken",
+		c.token_expire_date_third AS "thirdTokenExpireDate",
+		c.active AS "active",
+		c.user_image AS "userImage",
+		c.facebook_id AS "facebookId",
+		c.twitter_id AS "twitterId",
+		c.google_id AS "googleId",
+		c.create_by AS "createBy.id",
+		c.create_date AS "createDate",
+		c.update_by AS "updateBy.id",
+		c.update_date AS "updateDate",
+		c.remarks AS "remarks",
+		c.del_flag AS "delFlag"
+	</sql>
+
+    <sql id="consumerJoins">
+        LEFT JOIN consumer_role m ON c.user_role_id = m.id
+    </sql>
+
+    <select id="get" resultType="Consumer">
+        SELECT
+        <include refid="consumerColumns"/>
+        FROM consumer c
+        <include refid="consumerJoins"/>
+        WHERE c.id = #{id}
+    </select>
+
+    <select id="findList" resultType="Consumer">
+        SELECT
+        <include refid="consumerColumns"/>
+        FROM consumer c
+        <include refid="consumerJoins"/>
+        <where>
+            c.del_flag = #{DEL_FLAG_NORMAL}
+            <if test="email != null and email != ''">
+                AND c.email LIKE
+                <if test="dbName == 'oracle'">'%'||#{email}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{email}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{email},'%')</if>
+            </if>
+            <if test="firstName != null and firstName != ''">
+                AND c.first_name LIKE
+                <if test="dbName == 'oracle'">'%'||#{firstName}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{firstName}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{firstName},'%')</if>
+            </if>
+        </where>
+        <choose>
+            <when test="page !=null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+                ORDER BY c.update_date DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findAllList" resultType="Consumer">
+        SELECT
+        <include refid="consumerColumns"/>
+        FROM consumer c
+        <include refid="consumerJoins"/>
+        <where>
+            c.del_flag = #{DEL_FLAG_NORMAL}
+        </where>
+        <choose>
+            <when test="page !=null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+                ORDER BY c.update_date DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="insert">
+		INSERT INTO consumer(
+			id,
+			email,
+			first_name,
+			last_name,
+			nick_name,
+			gender,
+			birthday,
+			password,
+			user_role_id,
+			access_token_web,
+			token_expire_date_web,
+			access_token_mobile,
+			token_expire_date_mobile,
+			reset_password_token,
+			reset_password_token_expire_date,
+			active,
+			user_image,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{email},
+			#{firstName},
+			#{lastName},
+			#{nickName},
+			#{gender},
+			#{birthday},
+			#{password},
+			#{userRoleId},
+			#{webAccessToken},
+			#{webTokenExpireDate},
+			#{mobileAccessToken},
+			#{mobileTokenExpireDate},
+			#{resetPasswordToken},
+			#{resetPasswordTokenExpireDate},
+			#{active},
+			#{userImage},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+
+    <update id="update">
+		UPDATE consumer SET 	
+			email = #{email},
+			first_name = #{firstName},
+			last_name = #{lastName},
+			nick_name = #{nickName},
+			gender = #{gender},
+			birthday = #{birthday},
+			password = #{password},
+			user_role_id = #{userRoleId},
+			access_token_web = #{webAccessToken},
+			token_expire_date_web = #{webTokenExpireDate},
+			access_token_mobile = #{mobileAccessToken},
+			token_expire_date_mobile = #{mobileTokenExpireDate},
+			reset_password_token = #{resetPasswordToken},
+			reset_password_token_expire_date = #{resetPasswordTokenExpireDate},
+			active = #{active},
+			user_image = #{userImage},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+
+    <update id="delete">
+		UPDATE consumer SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+
+    <!-- 根据登录名查询用户 -->
+    <select id="getByEmail" resultType="Consumer" parameterType="Consumer">
+        SELECT
+        <include refid="consumerColumns"/>
+        FROM consumer c
+        <include refid="consumerJoins"/>
+        WHERE c.email = #{email} AND c.del_flag = #{DEL_FLAG_NORMAL}
+    </select>
+
+    <!-- 根据登录名查询用户 -->
+    <select id="getByEmailAndPassword" resultType="Consumer" parameterType="Consumer">
+        SELECT
+        <include refid="consumerColumns"/>
+        FROM consumer c
+        <include refid="consumerJoins"/>
+        WHERE c.email = #{email}
+        AND c.password = #{password}
+        AND c.del_flag = #{DEL_FLAG_NORMAL}
+    </select>
+
+    <select id="getByToken" resultType="Consumer" parameterType="Consumer">
+        SELECT
+        <include refid="consumerColumns"/>
+        FROM consumer c
+        <include refid="consumerJoins"/>
+        WHERE c.del_flag = #{DEL_FLAG_NORMAL}
+        <if test="resetPasswordToken != null">
+          AND c.reset_password_token = #{resetPasswordToken}
+          AND c.reset_password_token_expire_date &gt; NOW()
+        </if>
+        <if test="mobileAccessToken != null">
+            AND c.access_token_mobile = #{mobileAccessToken}
+            AND c.token_expire_date_mobile &gt; NOW()
+        </if>
+        <if test="webAccessToken != null">
+            AND c.access_token_web = #{webAccessToken}
+            AND c.token_expire_date_web &gt; NOW()
+        </if>
+    </select>
+
+    <select id="getByThirdId" resultType="Consumer" parameterType="Consumer">
+        SELECT
+        <include refid="consumerColumns"/>
+        FROM consumer c
+        <include refid="consumerJoins"/>
+        WHERE c.del_flag = #{DEL_FLAG_NORMAL}
+        <if test="facebookId != null">
+          AND c.facebook_id = #{facebookId}
+        </if>
+        <if test="twitterId != null">
+            AND c.twitter_id = #{twitterId}
+        </if>
+        <if test="googleId != null">
+            AND c.google_id = #{googleId}
+        </if>
+    </select>
+
+    <update id="updateMobileAccessToken">
+		UPDATE consumer SET
+		access_token_mobile = #{mobileAccessToken},
+		token_expire_date_mobile = #{mobileTokenExpireDate}
+		WHERE id = #{id}
+	</update>
+
+    <update id="updatePassword">
+		UPDATE consumer SET
+		password = #{password},
+		access_token_mobile = NULL ,
+		token_expire_date_mobile = NULL,
+		access_token_web = NULL ,
+		token_expire_date_web = NULL,
+		reset_password_token = NULL,
+		reset_password_token_expire_date = NULL
+		WHERE id = #{id}
+	</update>
+
+    <update id="updateResetPasswordToken">
+		UPDATE consumer SET
+		reset_password_token = #{resetPasswordToken},
+		reset_password_token_expire_date = #{resetPasswordTokenExpireDate}
+		WHERE id = #{id}
+	</update>
+
+    <update id="activeRegisterUser">
+		UPDATE consumer SET
+		reset_password_token = NULL,
+		reset_password_token_expire_date = NULL,
+		active = #{active}
+		WHERE id = #{id}
+	</update>
+
+</mapper>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.movieclub.comment.dao.MovieConsumerCommentsDao">
+    
+	<sql id="movieConsumerCommentsColumns">
+		a.id AS "id",
+		a.parent_comment_id AS "parentCommentId",
+		a.movie_id AS "movieId",
+		a.consumer_id AS "consumerId",
+		a.comment_description AS "commentDescription",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		c.first_name AS "firstName",
+		c.last_name AS "lastName",
+		c.nick_name AS "nickName"
+	</sql>
+	
+	<sql id="movieConsumerCommentsJoins">
+        left join consumer c on c.id=a.consumer_id
+	</sql>
+    
+	<select id="get" resultType="MovieConsumerComments">
+		SELECT 
+			<include refid="movieConsumerCommentsColumns"/>
+		FROM movie_consumer_comments a
+		<include refid="movieConsumerCommentsJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="MovieConsumerComments">
+		SELECT 
+			<include refid="movieConsumerCommentsColumns"/>
+		FROM movie_consumer_comments a
+		<include refid="movieConsumerCommentsJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="MovieConsumerComments">
+		SELECT 
+			<include refid="movieConsumerCommentsColumns"/>
+		FROM movie_consumer_comments a
+		<include refid="movieConsumerCommentsJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO movie_consumer_comments(
+			id,
+			parent_comment_id,
+			movie_id,
+			consumer_id,
+			comment_description,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{parentCommentId},
+			#{movieId},
+			#{consumerId},
+			#{commentDescription},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE movie_consumer_comments SET 	
+			parent_comment_id = #{parentCommentId},
+			movie_id = #{movieId},
+			consumer_id = #{consumerId},
+			comment_description = #{commentDescription},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE movie_consumer_comments SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+
+    <select id="getMovieComments" resultType="MovieConsumerComments" parameterType="MovieConsumerComments">
+        SELECT
+        <include refid="movieConsumerCommentsColumns"/>
+        FROM movie_consumer_comments a
+        <include refid="movieConsumerCommentsJoins"/>
+        WHERE
+        a.del_flag = #{DEL_FLAG_NORMAL} AND a.movie_id=#{movieId} order by a.create_date asc
+    </select>
+	
+</mapper>

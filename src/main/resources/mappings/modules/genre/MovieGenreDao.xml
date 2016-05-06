@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.movieclub.genre.dao.MovieGenreDao">
+    
+	<sql id="movieGenreColumns">
+		a.id AS "id",
+		a.genre_name AS "genreName",
+		a.genre_image AS "genreImage",
+		a.genre_image_title AS "genreImageTitle",
+		a.sort_order AS "sortOrder",
+		a.status AS "status",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="movieGenreJoins">
+	</sql>
+    
+	<select id="get" resultType="MovieGenre">
+		SELECT 
+			<include refid="movieGenreColumns"/>
+		FROM movie_genre a
+		<include refid="movieGenreJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="findList" resultType="MovieGenre">
+		SELECT
+		<include refid="movieGenreColumns"/>
+		FROM movie_genre a
+		<include refid="movieGenreJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="genreName != null and genreName != ''">
+				AND a.genre_name LIKE
+				<if test="dbName == 'oracle'">'%'||#{genreName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{genreName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{genreName},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="findAllList" resultType="MovieGenre">
+		SELECT 
+			<include refid="movieGenreColumns"/>
+		FROM movie_genre a
+		<include refid="movieGenreJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO movie_genre(
+			id,
+			genre_name,
+			genre_image,
+			genre_image_title,
+			sort_order,
+			status,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{genreName},
+			#{genreImage},
+			#{genreImageTitle},
+			#{sortOrder},
+			#{status},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE movie_genre SET 	
+			genre_name = #{genreName},
+			genre_image = #{genreImage},
+			genre_image_title = #{genreImageTitle},
+			sort_order = #{sortOrder},
+			status = #{status},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE movie_genre SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

@@ -1,0 +1,41 @@
+#-- 20151016
+#addToBucket
+POST: api/m/comments/addComment?token=zzz
+{
+            "movieId": "xxxx",
+            "consumerId": "aaaa",
+			"commentDescription":"zzzxxxcccvvv"
+}
+
+		
+#getMyBucket
+GET: api/m/comments/getMovieComments?id=zzz
+
+id:movieId
+return:
+[
+  {
+    "movieId": "3",
+    "consumerId": "0fc325755fa94521846c823a935cc3ec",
+    "commentDescription": "Byzantium",
+    "firstName": "aaa",
+	"lastName": "zzz",
+	"nickName": "aaxxxxa"
+  },
+  {
+    "movieId": "3",
+    "consumerId": "zzzzzzzzzzzzzzz",
+    "commentDescription": "sssssss",
+    "firstName": "aaa",
+	"lastName": "zzz",
+	"nickName": "aaxxxxa"
+  },
+  {
+    "movieId": "3",
+    "consumerId": "xxxxxxxxxxxxx",
+    "commentDescription": "dddddd",
+    "firstName": "aaa",
+	"lastName": "zzz",
+	"nickName": "aaxxxxa"
+  }
+]

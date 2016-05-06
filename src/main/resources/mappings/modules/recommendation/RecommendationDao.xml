@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.movieclub.recommendation.dao.RecommendationDao">
+    
+	<sql id="recommendationColumns">
+		a.id AS "id",
+		a.movie_id AS "movie.id",
+		a.sort_order AS "sortOrder",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		m.title AS "movie.title",
+		m.genre AS "movie.genre"
+	</sql>
+	
+	<sql id="recommendationJoins">
+		LEFT JOIN movie m ON a.movie_id = m.id
+	</sql>
+    
+	<select id="get" resultType="Recommendation">
+		SELECT 
+			<include refid="recommendationColumns"/>
+		FROM recommendation a
+		<include refid="recommendationJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="getByMovieId" resultType="Recommendation">
+		SELECT
+		<include refid="recommendationColumns"/>
+		FROM recommendation a
+		<include refid="recommendationJoins"/>
+		WHERE m.id = #{movieId}
+	</select>
+
+	<select id="findList" resultType="Recommendation">
+		SELECT 
+			<include refid="recommendationColumns"/>
+		FROM recommendation a
+		<include refid="recommendationJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Recommendation">
+		SELECT 
+			<include refid="recommendationColumns"/>
+		FROM recommendation a
+		<include refid="recommendationJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO recommendation(
+			id,
+			movie_id,
+			sort_order,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{movie.id},
+			#{sortOrder},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE recommendation SET 	
+			movie_id = #{movie.id},
+			sort_order = #{sortOrder},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE recommendation SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

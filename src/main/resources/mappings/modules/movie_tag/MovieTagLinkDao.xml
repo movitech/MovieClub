@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.movieclub.movie_tag.dao.MovieTagLinkDao">
+    
+	<sql id="movieTagLinkColumns">
+		a.id AS "id",
+		a.tag_id AS "tagId",
+		a.movie_id AS "movieId",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="movieTagLinkJoins">
+	</sql>
+    
+	<select id="get" resultType="MovieTagLink">
+		SELECT 
+			<include refid="movieTagLinkColumns"/>
+		FROM movie_tag a
+		<include refid="movieTagLinkJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="MovieTagLink">
+		SELECT 
+			<include refid="movieTagLinkColumns"/>
+		FROM movie_tag a
+		<include refid="movieTagLinkJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="tagId != null and tagId != ''">
+				AND a.tag_id = #{tagId}
+			</if>
+			<if test="movieId != null and movieId != ''">
+				AND a.movie_id = #{movieId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="MovieTagLink">
+		SELECT 
+			<include refid="movieTagLinkColumns"/>
+		FROM movie_tag a
+		<include refid="movieTagLinkJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO movie_tag(
+			id,
+			tag_id,
+			movie_id,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{tagId},
+			#{movieId},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE movie_tag SET 	
+			tag_id = #{tagId},
+			movie_id = #{movieId},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE movie_tag SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

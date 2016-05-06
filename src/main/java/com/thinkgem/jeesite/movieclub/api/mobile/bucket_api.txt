@@ -1,0 +1,44 @@
+#-- 20151016
+#addToBucket
+POST: api/m/bucket/addToBucket?token=zzz
+{
+            "movieId": "xxxx",
+            "consumerId": "aaaa"
+}
+#removeFromBucket
+PUT: api/m/bucket/removeFromBucket?token=zzz
+{
+            "movieId": "xxxx",
+            "consumerId": "aaaa"
+}
+		
+#getMyBucket
+GET: api/m/bucket/getMyBucket?token=zzz
+
+return:
+[
+  {
+    "movieId": "3",
+    "consumerId": "0fc325755fa94521846c823a935cc3ec",
+    "title": "Byzantium",
+    "movieImage": "movie-image-206-Byzantium.jpg"
+  },
+  {
+    "movieId": "4",
+    "consumerId": "0fc325755fa94521846c823a935cc3ec",
+    "title": "Rush",
+    "movieImage": "movie-image-207-rush.jpg"
+  },
+  {
+    "movieId": "6",
+    "consumerId": "0fc325755fa94521846c823a935cc3ec",
+    "title": "Earth to Echo",
+    "movieImage": "movie-image-227-EarthToEcho.jpg"
+  },
+  {
+    "movieId": "5",
+    "consumerId": "0fc325755fa94521846c823a935cc3ec",
+    "title": "3 Days to Kill",
+    "movieImage": "movie-image-211-3DAYSTOKILL.jpg"
+  }
+]

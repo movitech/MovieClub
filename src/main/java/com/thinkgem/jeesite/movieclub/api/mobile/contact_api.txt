@@ -1,0 +1,21 @@
+#-- 20151015
+#advertise
+POST: api/m/contact/advertise?token=zzzz
+{
+            "name": "xxxx",
+            "company": "Action & Adventure",
+            "email": "er@qq.com",
+            "phone": "123454",
+			"comments":"zzzzzzzz"
+}
+#contact us
+POST: api/m/contact/contactUs?token=zzzz
+{
+            "name": "xxxx",
+            "company": "Action & Adventure",
+            "email": "er@qq.com",
+            "phone": "123454",
+			"comments":"zzzzzzzz"
+}
+		
+
